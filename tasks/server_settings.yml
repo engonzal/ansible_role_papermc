@@ -38,7 +38,7 @@
     - option: broadcast-console-to-ops
       value: "{{ papermc_broadcast_console_to_ops | default ('true') }}"
     - option: papermc_enforce_whitelist
-      value: "{{ papermc_enforce_whitelist | default('false') }}"
+      value: "{{ papermc_enforce_whitelist | default('true') }}"
     - option: max-players
       value: "{{ papermc_max_players | default('10') }}"
   notify: restart papermc

@@ -34,6 +34,12 @@ papermc_mem: 1G
 
 Set the amount of memory to use for your minecraft server.
 
+```yaml
+papermc_agree_to_eula: true
+```
+
+Also not required, but take note that you're agreeing to the Minecraft EULA <https://account.mojang.com/documents/minecraft_eula>
+
 ### Optional
 
 ```yaml
