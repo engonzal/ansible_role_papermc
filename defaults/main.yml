@@ -1,0 +1,30 @@
+---
+papermc_deps_apt:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - python-apt
+  - tmux
+papermc_deps_yum:
+  - curl
+  - tmux
+papermc_deps_java_apt: default-jre-headless
+papermc_deps_java_yum: java-11-openjdk-headless
+
+papermc_version: "1.14.4"
+papermc_version_build: "latest"
+papermc_url: "https://papermc.io/api/v1/paper/{{ papermc_version }}/{{ papermc_version_build }}/download"
+
+papermc_dir_main: /app/papermc
+papermc_dir_systemd: /etc/systemd/system
+
+papermc_bin: papermc.jar
+papermc_bin_java: /usr/bin/java
+
+papermc_user: paper
+papermc_group: "{{ papermc_user }}"
+
+papermc_mem: 1G
+papermc_run_options: "-XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:MaxGCPauseMillis=100 -XX:+DisableExplicitGC -XX:TargetSurvivorRatio=90 -XX:G1NewSizePercent=50 -XX:G1MaxNewSizePercent=80 -XX:G1MixedGCLiveThresholdPercent=35 -XX:+AlwaysPreTouch -XX:+ParallelRefProcEnabled -Dusing.aikars.flags=mcflags.emc.gs"
+papermc_whitelist: []
+papermc_ops: []

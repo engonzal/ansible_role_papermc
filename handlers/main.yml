@@ -1,0 +1,9 @@
+---
+- name: systemd daemon-reload
+  systemd:
+    daemon-reload: yes
+
+- name: restart papermc
+  service:
+    name: papermc
+    state: restarted

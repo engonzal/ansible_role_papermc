@@ -1,0 +1,16 @@
+[Unit]
+Description=Minecraft PaperMC Server
+After=local-fs.target network.target
+
+[Service]
+WorkingDirectory={{ papermc_dir_main }}
+User={{ papermc_user}}
+Group={{ papermc_group }}
+Type=forking
+
+ExecStart=/usr/bin/tmux new-session -s papermc -d '{{ papermc_dir_main }}/papermc_server.sh' 
+ExecStop=/usr/bin/tmux send-keys -t papermc:0.0 'say SERVER SHUTTING DOWN NOW. Saving world...' C-m 'save-all' C-m 'stop' C-m
+ExecStop=/bin/bash -c "while ps -p $MAINPID > /dev/null; do /bin/sleep 1; done"
+
+[Install]
+WantedBy=multi-user.target

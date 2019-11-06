@@ -1,0 +1,14 @@
+- name: Install minecraft deps
+  package:
+    name: "{{ papermc_deps_apt }}"
+    state: present
+
+- name: Fix java error on some debian installs
+  file:
+    path: "/usr/share/man/man1"
+    state: directory
+
+- name: Install java
+  package:
+    name: "{{ papermc_deps_java_apt }}"
+    state: present

@@ -1,0 +1,48 @@
+---
+- name: Include distro specific tasks
+  include_tasks: "{{ ansible_os_family }}.yml"
+
+- name: Create minecraft group
+  group:
+    name: "{{ papermc_group }}"
+
+- name: Create minecraft user
+  user:
+    name: "{{ papermc_user }}"
+    shell: "/bin/bash"
+    group: "{{ papermc_group }}"
+
+- name: Create papermc dir
+  file:
+    state: directory
+    path: "{{ papermc_dir_main }}"
+    recurse: yes
+    owner: "{{ papermc_user }}"
+    group: "{{ papermc_group }}"
+
+- name: Download minecraft paperd
+  get_url:
+    url: "{{ papermc_url }}"
+    dest: "{{ papermc_dir_main }}/{{ papermc_bin }}"
+    owner: "{{ papermc_user }}"
+    group: "{{ papermc_group }}"
+
+- name: Create papermc run script
+  template:
+    src: papermc_server.sh.j2
+    dest: "{{ papermc_dir_main }}/papermc_server.sh"
+    mode: "0755"
+    owner: "{{ papermc_user }}"
+    group: "{{ papermc_group }}"
+
+- name: Install systemd unit
+  template:
+    src: papermc.service.j2
+    dest: "{{ papermc_dir_systemd }}/papermc.service"
+  notify: systemd daemon-reload
+
+- name: Pick up systemd changes if modified
+  meta: flush_handlers
+
+- name: Configure papermc
+  include_tasks: server_settings.yml

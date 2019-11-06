@@ -1,0 +1,9 @@
+- name: Install minecraft deps
+  package:
+    name: "{{ papermc_deps_yum }}"
+    state: present
+
+- name: Install java
+  package:
+    name: "{{ papermc_deps_java_yum }}"
+    state: present

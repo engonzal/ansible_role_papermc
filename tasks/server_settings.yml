@@ -1,0 +1,69 @@
+---
+- name: Create papermc eula
+  template:
+    src: eula.txt.j2
+    dest: "{{ papermc_dir_main }}/eula.txt"
+    mode: "0755"
+    owner: "{{ papermc_user }}"
+    group: "{{ papermc_group }}"
+
+- name: Generate server.properties
+  shell: |
+    set -o pipefail
+    echo "stop" | {{ papermc_bin_java }} {{ papermc_run_options }} -jar {{ papermc_dir_main }}/{{ papermc_bin }} nogui
+  args:
+    creates: "{{ papermc_dir_main }}/server.properties"
+    chdir: "{{ papermc_dir_main }}"
+    executable: /bin/bash
+  become: true
+  become_user: "{{ papermc_user }}"
+
+# Whenever the minecraft server started it modifies server.properties
+# with the data and time that the server started.  Using a template
+# made idempotence tests fail.
+- name: server.properies
+  ini_file:
+    path: "{{ papermc_dir_main }}/server.properties"
+    section: null
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    no_extra_spaces: yes
+  loop:
+    - option: server-port
+      value: "{{ papermc_server_port | default('25565') }}"
+    - option: motd
+      value: "{{ papermc_motd | default('A Paper Minecraft Server') }}"
+    - option: white-list
+      value: "{{ papermc_white_list | default('false') }}"
+    - option: broadcast-console-to-ops
+      value: "{{ papermc_broadcast_console_to_ops | default ('true') }}"
+    - option: papermc_enforce_whitelist
+      value: "{{ papermc_enforce_whitelist | default('false') }}"
+    - option: max-players
+      value: "{{ papermc_max_players | default('10') }}"
+  notify: restart papermc
+
+- name: Create whitelist
+  template:
+    src: whitelist.txt.j2
+    dest: "{{ papermc_dir_main }}/whitelist.txt"
+    mode: "0755"
+    owner: "{{ papermc_user }}"
+    group: "{{ papermc_group }}"
+  when: papermc_whitelist|length > 1
+  notify: restart papermc
+
+- name: Update ops
+  template:
+    src: ops.txt.j2
+    dest: "{{ papermc_dir_main }}/ops.txt"
+    mode: "0755"
+    owner: "{{ papermc_user }}"
+    group: "{{ papermc_group }}"
+  when: papermc_ops|length > 1
+  notify: restart papermc
+
+- name: Start and enable papermc
+  service:
+    name: papermc
+    enabled: yes
